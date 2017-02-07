@@ -28,13 +28,12 @@ Server Code Sample
    
 Client Code Sample
 
-var greeter = system.ActorSelection("akka.tcp://MyServer@localhost:9000/user/greeter");
+    var greeter = system.ActorSelection("akka.tcp://MyServer@localhost:9000/user/greeter");
+    var result = greeter.Ask("Hi2", null).Result; //Wair For Result
+    Console.WriteLine(result);
 
-var result = greeter.Ask("Hi2", null).Result; //Wair For Result
-Console.WriteLine(result);
-
-List<int> tmpList = new List<int>();
-greeter.Tell(tmpList);    //Just Tell...
+    List<int> tmpList = new List<int>();
+    greeter.Tell(tmpList);    //Just Tell...
     
     
     
