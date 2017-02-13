@@ -5,8 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Akka;
 using Akka.Actor;
+using Akka.Routing;
 using Akka.Event;
 using Akka.Configuration;
+
+using ServiceActor.Shared.Actors;
 
 namespace ServiceB
 {
@@ -14,47 +17,56 @@ namespace ServiceB
     {
         static void Main(string[] args)
         {
-            var config = ConfigurationFactory.ParseString(@"
-            akka {
-                actor {
-                    provider = ""Akka.Remote.RemoteActorRefProvider, Akka.Remote""
-                }
 
-                remote {
-                    helios.tcp {
-                        port = 9000
-                        hostname = localhost
-                    }
-                }
-            }
-            ");
+            ConsoleKeyInfo cki;
+            Console.CancelKeyPress += new ConsoleCancelEventHandler(myHandler);
 
-            using (var system = ActorSystem.Create("MyClient", config))
-            {
-                //get a reference to the remote actor
-                var greeter = system
-                    .ActorSelection("akka.tcp://MyServer@localhost:9000/user/greeter");
-                //send a message to the remote actor
-                
-                
-                var result = greeter.Ask("Hi2", null).Result;
-                Console.WriteLine(result);
+            using (var system = ActorSystem.Create("ClusterSystem"))
+            {                
+                var router = system.ActorOf(Props.Create<SimpleClusterListener>().WithRouter(FromConfig.Instance), "myClusterGroupRouter");
+                var remoteActor = system.ActorSelection("akka.tcp://ClusterSystem@localhost:4052/user/myRemoteRouter/c1");
 
-                for (int i = 0; i < 100; i++)
+                while (true)
                 {
-                    greeter.Tell("Hi..." + i);
+                    try
+                    {
+                        remoteActor.Tell("Send To Specific Node");
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
 
+                    Console.Write("Press any key, or 'X' to quit, or ");
+                    Console.WriteLine("CTRL+C to interrupt the read operation:");
+
+                    // Start a console read operation. Do not display the input.
+                    cki = Console.ReadKey(true);
+
+                    // Announce the name of the key that was pressed .
+                    Console.WriteLine("  Key pressed: {0}\n", cki.Key);
+                    // Exit if the user pressed the 'X' key.
+                    if (cki.Key == ConsoleKey.X) break;
                 }
 
-                List<int> tmpList = new List<int>();
-                tmpList.Add(1);
-                tmpList.Add(2);
-                tmpList.Add(3);
-
-                greeter.Tell(tmpList);
-                
-                Console.ReadLine();
             }
+        }
+
+        protected static void myHandler(object sender, ConsoleCancelEventArgs args)
+        {
+            Console.WriteLine("\nThe read operation has been interrupted.");
+
+            Console.WriteLine("  Key pressed: {0}", args.SpecialKey);
+
+            Console.WriteLine("  Cancel property: {0}", args.Cancel);
+
+            // Set the Cancel property to true to prevent the process from terminating.
+            Console.WriteLine("Setting the Cancel property to true...");
+            args.Cancel = true;
+
+            // Announce the new value of the Cancel property.
+            Console.WriteLine("  Cancel property: {0}", args.Cancel);
+            Console.WriteLine("The read operation will resume...\n");
         }
     }
 }

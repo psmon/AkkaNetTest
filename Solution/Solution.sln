@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceA", "ServiceA\Servic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceB", "ServiceB\ServiceB.csproj", "{D3730E57-FDB3-4777-BA9A-C393F479C80B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceActor.Shared", "ServiceActor.Shared\ServiceActor.Shared.csproj", "{CA5AF2E5-6CFA-4DB6-9AE8-ABB88B18B0D7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{D3730E57-FDB3-4777-BA9A-C393F479C80B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3730E57-FDB3-4777-BA9A-C393F479C80B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D3730E57-FDB3-4777-BA9A-C393F479C80B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA5AF2E5-6CFA-4DB6-9AE8-ABB88B18B0D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA5AF2E5-6CFA-4DB6-9AE8-ABB88B18B0D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA5AF2E5-6CFA-4DB6-9AE8-ABB88B18B0D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA5AF2E5-6CFA-4DB6-9AE8-ABB88B18B0D7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

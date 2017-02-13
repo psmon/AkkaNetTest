@@ -8,50 +8,60 @@ using Akka.Actor;
 using Akka.Event;
 using Akka.Configuration;
 
+using ServiceActor.Shared.Actors;
+using Akka.Routing;
 
 namespace ServiceA
 {
-    public class MyActor : ReceiveActor
-    {        
-        public MyActor()
-        {
-            Receive<string>(message => {                
-                Console.WriteLine("Received String message: {0}", message);
-                Sender.Tell("re:"+message);
-            });
-
-            Receive<List<int>>(message => {
-                Console.WriteLine("Received ListCount: {0}", message.Count);
-                Sender.Tell("re:" + message);
-            });
-        }
-    }
 
     class Program
     {
         static void Main(string[] args)
         {
-            var config = ConfigurationFactory.ParseString(@"
-            akka {
-                actor {
-                    provider = ""Akka.Remote.RemoteActorRefProvider, Akka.Remote""
-                }
+            ConsoleKeyInfo cki;
+            Console.CancelKeyPress += new ConsoleCancelEventHandler(myHandler);
 
-                remote {
-                    helios.tcp {
-                        port = 9000
-                        hostname = localhost
-                    }
-                }
-            }
-            ");
 
-            using (ActorSystem system = ActorSystem.Create("MyServer", config))
-            {
-                system.ActorOf<MyActor>("greeter");
-                Console.ReadKey();
+            using (ActorSystem system = ActorSystem.Create("ClusterSystem"))
+            {                
+                var clusteActor = system.ActorOf(Props.Create<SimpleClusterListener>().WithRouter(FromConfig.Instance), "myClusterGroupRouter");                                
+                var remoteActor = system.ActorOf(Props.Create<SimpleClusterListener>().WithRouter(FromConfig.Instance), "myRemoteRouter");
+
+                while (true)
+                {                    
+
+                    // Start a console read operation. Do not display the input.
+                    cki = Console.ReadKey(true);
+
+                    // Announce the name of the key that was pressed .
+                    Console.WriteLine("  Key pressed: {0}\n", cki.Key);
+                    clusteActor.Tell("Hello From Seed Node " + cki.Key);
+
+
+                    // Exit if the user pressed the 'X' key.
+                    if (cki.Key == ConsoleKey.X) break;
+
+                }
             }
 
         }
+
+        protected static void myHandler(object sender, ConsoleCancelEventArgs args)
+        {
+            Console.WriteLine("\nThe read operation has been interrupted.");
+
+            Console.WriteLine("  Key pressed: {0}", args.SpecialKey);
+
+            Console.WriteLine("  Cancel property: {0}", args.Cancel);
+
+            // Set the Cancel property to true to prevent the process from terminating.
+            Console.WriteLine("Setting the Cancel property to true...");
+            args.Cancel = true;
+
+            // Announce the new value of the Cancel property.
+            Console.WriteLine("  Cancel property: {0}", args.Cancel);
+            Console.WriteLine("The read operation will resume...\n");
+        }
     }
 }
+
