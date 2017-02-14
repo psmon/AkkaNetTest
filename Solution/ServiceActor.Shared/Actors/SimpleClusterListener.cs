@@ -67,8 +67,8 @@ namespace ServiceActor.Shared.Actors
             else if (message is ClusterEvent.UnreachableMember)
             {
                 var unreachable = (ClusterEvent.UnreachableMember)message;
-                Log.Warning("Member detected as unreachable: {0}", unreachable.Member.Roles );
-                
+                Log.Warning("Member detected as unreachable: {0}", unreachable.Member.Roles );                
+
                 if (unreachable.Member.HasRole("seedcrawler") == false)
                 {                    
                     //Cluster.Down(unreachable.Member.Address);

@@ -24,7 +24,7 @@ namespace ServiceB
             using (var system = ActorSystem.Create("ClusterSystem"))
             {                
                 var router = system.ActorOf(Props.Create<SimpleClusterListener>().WithRouter(FromConfig.Instance), "myClusterGroupRouter");
-                var remoteActor = system.ActorSelection("akka.tcp://ClusterSystem@localhost:4052/user/myRemoteRouter/c1");
+                var remoteActor = system.ActorSelection("akka.tcp://RemoteSystem@localhost:9000/user/greeter");
 
                 while (true)
                 {
@@ -41,10 +41,12 @@ namespace ServiceB
                     Console.WriteLine("CTRL+C to interrupt the read operation:");
 
                     // Start a console read operation. Do not display the input.
-                    cki = Console.ReadKey(true);
+                    cki = Console.ReadKey(true);                    
 
                     // Announce the name of the key that was pressed .
                     Console.WriteLine("  Key pressed: {0}\n", cki.Key);
+                    router.Tell("Hello From Seed Node " + cki.Key);
+
                     // Exit if the user pressed the 'X' key.
                     if (cki.Key == ConsoleKey.X) break;
                 }
