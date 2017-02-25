@@ -1,5 +1,11 @@
 # AkkaNetTest
 
+.net에서 리모트,클러스터,샤딩,퍼시던트등 다양한 
+
+서버 메시지모델을 구현해보고 테스트해보는 코드입니다.
+
+# Remote Test
+
 Server Code Sample
 
     public class MyActor : ReceiveActor
@@ -24,8 +30,7 @@ Server Code Sample
                 Console.ReadKey();
             }
             
-   
-   
+      
 Client Code Sample
 
     var greeter = system.ActorSelection("akka.tcp://MyServer@localhost:9000/user/greeter");
@@ -35,5 +40,5 @@ Client Code Sample
     List<int> tmpList = new List<int>();
     greeter.Tell(tmpList);    //Just Tell...
     
-    
+ 
     
