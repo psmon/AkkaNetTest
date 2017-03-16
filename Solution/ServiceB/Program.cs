@@ -9,6 +9,8 @@ using Akka.Routing;
 using Akka.Event;
 using Akka.Configuration;
 
+using Akka.Cluster;
+
 using ServiceActor.Shared.Actors;
 
 namespace ServiceB
@@ -22,15 +24,19 @@ namespace ServiceB
             Console.CancelKeyPress += new ConsoleCancelEventHandler(myHandler);
 
             using (var system = ActorSystem.Create("ClusterSystem"))
-            {                
+            {
+                //var router = system.ActorOf(Props.Create<SimpleClusterListener>().WithRouter(FromConfig.Instance), "myClusterGroupRouter");                
+
                 var router = system.ActorOf(Props.Create<SimpleClusterListener>().WithRouter(FromConfig.Instance), "myClusterGroupRouter");
-                var remoteActor = system.ActorSelection("akka.tcp://RemoteSystem@localhost:9000/user/greeter");
+
+                // subscribe to all future IMemberEvents and get current state as snapshot
+
+
 
                 while (true)
                 {
                     try
-                    {
-                        remoteActor.Tell("Send To Specific Node");
+                    {                        
                     }
                     catch (Exception e)
                     {

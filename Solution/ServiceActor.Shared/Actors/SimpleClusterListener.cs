@@ -57,7 +57,7 @@ namespace ServiceActor.Shared.Actors
         }
 
         protected override void OnReceive(object message)
-        {
+        {            
             var up = message as ClusterEvent.MemberUp;
             if (up != null)
             {
@@ -71,7 +71,7 @@ namespace ServiceActor.Shared.Actors
 
                 if (unreachable.Member.HasRole("seedcrawler") == false)
                 {                    
-                    //Cluster.Down(unreachable.Member.Address);
+                    Cluster.Down(unreachable.Member.Address);
                 }                
 
             }

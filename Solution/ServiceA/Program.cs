@@ -22,29 +22,14 @@ namespace ServiceA
             ConsoleKeyInfo cki;
             Console.CancelKeyPress += new ConsoleCancelEventHandler(myHandler);
             
-            var config = ConfigurationFactory.ParseString(@"
-            akka {
-                actor {
-                    provider = ""Akka.Remote.RemoteActorRefProvider, Akka.Remote""
-                }
 
-                remote {
-                    helios.tcp {
-                        port = 9000
-                        hostname = localhost
-                    }
-                }
-            }
-            ");
 
 
             using (ActorSystem system = ActorSystem.Create("ClusterSystem"))
             {                
                 var clusteActor = system.ActorOf(Props.Create<SimpleClusterListener>().WithRouter(FromConfig.Instance), "myClusterGroupRouter");
+                
                 //var remoteActor = system.ActorOf(Props.Create<SimpleClusterListener>().WithRouter(FromConfig.Instance), "myRemoteRouter");
-
-                ActorSystem system2 = ActorSystem.Create("RemoteSystem", config);
-                system2.ActorOf<TestActor>("greeter");
 
                 while (true)
                 {                    
