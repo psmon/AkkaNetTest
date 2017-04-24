@@ -22,25 +22,29 @@ namespace ServiceA
             ConsoleKeyInfo cki;
             Console.CancelKeyPress += new ConsoleCancelEventHandler(myHandler);
             
-
-
-
-            using (ActorSystem system = ActorSystem.Create("ClusterSystem"))
-            {                
-                var clusteActor = system.ActorOf(Props.Create<SimpleClusterListener>().WithRouter(FromConfig.Instance), "myClusterGroupRouter");
+            using (ActorSystem system = ActorSystem.Create("ServiceA"))
+            {
                 
-                //var remoteActor = system.ActorOf(Props.Create<SimpleClusterListener>().WithRouter(FromConfig.Instance), "myRemoteRouter");
+                var props = Props.Create<TestActor>().WithRouter(FromConfig.Instance);
+                var actor = system.ActorOf(props, "some-group");
+
+                system.ActorOf<TestActor>("a1");
+                system.ActorOf<TestActor>("a2");
+                system.ActorOf<TestActor>("a3");
+
 
                 while (true)
                 {                    
-
                     // Start a console read operation. Do not display the input.
                     cki = Console.ReadKey(true);
-
                     // Announce the name of the key that was pressed .
                     Console.WriteLine("  Key pressed: {0}\n", cki.Key);
-                    clusteActor.Tell("Hello From Seed Node " + cki.Key);
+                    //clusteActor.Tell("Hello From Seed Node " + cki.Key);
 
+                    //system.ActorSelection("akka.tcp://ServiceB@127.0.0.1:4052/user/b1").Tell(cki.Key.ToString());
+
+                    actor.Tell(cki.Key.ToString() );
+                    
 
                     // Exit if the user pressed the 'X' key.
                     if (cki.Key == ConsoleKey.X) break;

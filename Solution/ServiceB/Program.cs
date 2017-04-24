@@ -23,15 +23,17 @@ namespace ServiceB
             ConsoleKeyInfo cki;
             Console.CancelKeyPress += new ConsoleCancelEventHandler(myHandler);
 
-            using (var system = ActorSystem.Create("ClusterSystem"))
+            using (var system = ActorSystem.Create("ServiceB"))
             {
-                //var router = system.ActorOf(Props.Create<SimpleClusterListener>().WithRouter(FromConfig.Instance), "myClusterGroupRouter");                
+                var props = Props.Create<TestActor>().WithRouter(FromConfig.Instance);
+                var actor = system.ActorOf(props, "workers");
 
-                var router = system.ActorOf(Props.Create<SimpleClusterListener>().WithRouter(FromConfig.Instance), "myClusterGroupRouter");
+                var props2 = Props.Create<TestActor>().WithRouter(FromConfig.Instance);
+                var actor2 = system.ActorOf(props2, "some-group2");
 
-                // subscribe to all future IMemberEvents and get current state as snapshot
-
-
+                system.ActorOf<TestActor>("b1");
+                system.ActorOf<TestActor>("b2");
+                system.ActorOf<TestActor>("b3");
 
                 while (true)
                 {
@@ -51,8 +53,9 @@ namespace ServiceB
 
                     // Announce the name of the key that was pressed .
                     Console.WriteLine("  Key pressed: {0}\n", cki.Key);
-                    router.Tell("Hello From Seed Node " + cki.Key);
 
+                    actor2.Tell(cki.Key.ToString());
+                    
                     // Exit if the user pressed the 'X' key.
                     if (cki.Key == ConsoleKey.X) break;
                 }
