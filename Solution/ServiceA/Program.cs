@@ -31,7 +31,7 @@ namespace ServiceA
                 system.ActorOf<TestActor>("a1");
                 system.ActorOf<TestActor>("a2");
                 system.ActorOf<TestActor>("a3");
-
+                
 
                 while (true)
                 {                    
@@ -43,8 +43,9 @@ namespace ServiceA
 
                     //system.ActorSelection("akka.tcp://ServiceB@127.0.0.1:4052/user/b1").Tell(cki.Key.ToString());
 
-                    actor.Tell(cki.Key.ToString() );
-                    
+                    //actor.Tell(cki.Key.ToString() );
+
+                    Console.WriteLine(actor.Ask(cki.Key.ToString()).Result);
 
                     // Exit if the user pressed the 'X' key.
                     if (cki.Key == ConsoleKey.X) break;

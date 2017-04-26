@@ -54,7 +54,9 @@ namespace ServiceB
                     // Announce the name of the key that was pressed .
                     Console.WriteLine("  Key pressed: {0}\n", cki.Key);
 
-                    actor2.Tell(cki.Key.ToString());
+                    //actor2.Tell(cki.Key.ToString());
+
+                    Console.WriteLine(actor.Ask(cki.Key.ToString()).Result);
                     
                     // Exit if the user pressed the 'X' key.
                     if (cki.Key == ConsoleKey.X) break;
