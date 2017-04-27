@@ -46,7 +46,7 @@ namespace ServiceActor.Shared.Actors
         {
             Receive<string>(message => {
                 Log.Info("Received String message: {0}", message);
-                Sender.Tell("I'am Noral re:" + message);
+                Sender.Tell("I'am Normal re:" + message);
                 ChkState(message);
             });
             
