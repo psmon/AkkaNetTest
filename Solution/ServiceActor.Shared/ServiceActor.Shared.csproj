@@ -111,6 +111,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actors\SimpleActor.cs" />
     <Compile Include="Actors\SimpleClusterListener.cs" />
     <Compile Include="Actors\TestActor.cs" />
     <Compile Include="Class1.cs" />
@@ -118,6 +119,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Actors\JavaActor.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

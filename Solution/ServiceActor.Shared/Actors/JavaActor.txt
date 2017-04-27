@@ -1,0 +1,79 @@
+﻿package actors
+
+== 순수하게 형태소를 분석하는 액터
+class WordParserAcotor extends Actor with ActorLogging{
+  var ma:MorphemeAnalyzer = null;
+
+  import WordParserAcotor._
+    def receive = {
+      case Greeting(greeter) => log.info(s"I was greeted by $greeter.")
+      case Goodbye           => log.info("Someone said goodbye to me.")
+      case AskParser(words,parserType,seqID) =>
+        if(parserType==1){          
+          var ret = ma.analyze(words)          
+          ret = ma.postProcess(ret)          
+          ret = ma.leaveJustBest(ret)
+          // divide result to setences
+          val stl:List[Sentence] = ma.divideToSentences(ret)
+          var sentenceSubList:ListBuffer[SentenceSubListModel] = ListBuffer[SentenceSubListModel]()
+          log.debug("==StlSize " + stl.size().toString())
+          for( stInfo <- stl.asScala ) {
+            log.debug(stInfo.getSentence)
+            val mainWord: String = stInfo.getSentence
+            //var sentenceModelList: Seq[SentenceModel] = Seq[SentenceModel]()
+            var sentenceModelList: ListBuffer[SentenceModel] = ListBuffer[SentenceModel]()
+
+            val subInfo = stInfo.listIterator();
+            for(subItem <- subInfo.asScala ){
+              log.debug("==SubInfo " + subItem )
+              var sentenceModel = SentenceModel(subItem.toString())
+              //sentenceModelList = sentenceModelList :+sentenceModel
+              sentenceModelList+=sentenceModel;
+              log.debug(subItem.toString())
+            }
+            var sentencSubListModel = SentenceSubListModel(mainWord, sentenceModelList)
+            sentenceSubList+=sentencSubListModel
+          }//End For
+          val wordResult = SentenceMainListModel( "WordParserInfo", seqID ,sentenceSubList)
+          val jsonData = Json.toJson(wordResult)
+          sender ! jsonData
+        }//end if
+    }
+  override def preStart()={
+    ma = new MorphemeAnalyzer
+
+  }
+
+  override def postStop()={
+    if(ma!=null){
+      ma.closeLogger();
+    }
+  }
+}
+
+
+
+== 기존 액터에서, 이기종 통신(웹소켓)
+class MyWebSocketActor(out: ActorRef, system:ActorSystem) extends Actor {
+  def receive = {
+    case msg: String =>
+      val json:JsValue = Json.parse(msg)
+      val pid = (json \ "pid").asOpt[String]
+      pid match {
+        case Some("WordParserInfo")  =>
+          val text:String = (json \ "text").as[String]
+          val reqID:Int = (json \ "reqID").as[Int]
+          system.actorSelection("/user/wordParserActor") ! AskParser(text,1,reqID)
+        case None =>
+          out ! ("None")
+      }
+    case msg: JsValue =>
+      out ! msg.toString()
+    case msg: SentenceMainListModel =>
+      out ! "ttt"
+  }
+
+}
+
+
+

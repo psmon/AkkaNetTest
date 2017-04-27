@@ -24,10 +24,17 @@ namespace ServiceA
             
             using (ActorSystem system = ActorSystem.Create("ServiceA"))
             {
+
+                //심플 액터 생성
+                system.ActorOf<SimpleActor>("simple");
+
                 
+                //클러스터 셋팅
                 var props = Props.Create<TestActor>().WithRouter(FromConfig.Instance);
                 var actor = system.ActorOf(props, "some-group");
 
+
+                //클러스터에 구성된 액터 생성
                 system.ActorOf<TestActor>("a1");
                 system.ActorOf<TestActor>("a2");
                 system.ActorOf<TestActor>("a3");

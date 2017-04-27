@@ -54,9 +54,17 @@ namespace ServiceB
                     // Announce the name of the key that was pressed .
                     Console.WriteLine("  Key pressed: {0}\n", cki.Key);
 
+
+                    // 심플 액터 테스트....
+                    var simpleActor = system.ActorSelection("akka.tcp://ServiceA@127.0.0.1:8001/user/simple");
+                    Console.WriteLine("simple Result:" + simpleActor.Ask( 100 ).Result);
+
+                    
+                    // 클러스터 테스트 ( 랜덤 )
                     //actor2.Tell(cki.Key.ToString());
 
-                    Console.WriteLine(actor.Ask(cki.Key.ToString()).Result);
+                    // 클러스터 테스트 ( 라운드 로빈 )
+                    //Console.WriteLine(actor.Ask(cki.Key.ToString()).Result);
                     
                     // Exit if the user pressed the 'X' key.
                     if (cki.Key == ConsoleKey.X) break;
