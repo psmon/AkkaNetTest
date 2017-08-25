@@ -26,10 +26,10 @@ namespace ServiceB
             using (var system = ActorSystem.Create("ServiceB"))
             {
                 var props = Props.Create<TestActor>().WithRouter(FromConfig.Instance);
-                var actor = system.ActorOf(props, "workers");
+                var roundRobbinActor = system.ActorOf(props, "workers");
 
                 var props2 = Props.Create<TestActor>().WithRouter(FromConfig.Instance);
-                var actor2 = system.ActorOf(props2, "some-group2");
+                var randomActor = system.ActorOf(props2, "some-group2");
 
                 system.ActorOf<TestActor>("b1");
                 system.ActorOf<TestActor>("b2");
@@ -57,15 +57,15 @@ namespace ServiceB
 
                     // 심플 액터 테스트....
                     var simpleActor = system.ActorSelection("akka.tcp://ServiceA@127.0.0.1:8001/user/simple");
-                    Console.WriteLine("simple Result:" + simpleActor.Ask( 100 ).Result);
+                    Console.WriteLine("simple Result:" + simpleActor.Ask( 100,TimeSpan.FromSeconds(2) ).Result ) ;
 
-                    
+
                     // 클러스터 테스트 ( 랜덤 )
-                    //actor2.Tell(cki.Key.ToString());
+                    //randomActor.Tell(cki.Key.ToString());
 
                     // 클러스터 테스트 ( 라운드 로빈 )
-                    //Console.WriteLine(actor.Ask(cki.Key.ToString()).Result);
-                    
+                    //Console.WriteLine( roundRobbinActor.Ask(cki.Key.ToString()).Result );
+
                     // Exit if the user pressed the 'X' key.
                     if (cki.Key == ConsoleKey.X) break;
                 }

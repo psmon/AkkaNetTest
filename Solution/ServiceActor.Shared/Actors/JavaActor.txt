@@ -75,5 +75,9 @@ class MyWebSocketActor(out: ActorRef, system:ActorSystem) extends Actor {
 
 }
 
+//http://psmon.iptime.org:9000/wstest
+//http://10.20.3.91:5000/
+
+
 
 

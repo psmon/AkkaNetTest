@@ -28,10 +28,12 @@ namespace ServiceA
                 //심플 액터 생성
                 system.ActorOf<SimpleActor>("simple");
 
+                SimpleClass simpleClass = new SimpleClass();
                 
+
                 //클러스터 셋팅
                 var props = Props.Create<TestActor>().WithRouter(FromConfig.Instance);
-                var actor = system.ActorOf(props, "some-group");
+                var broadCaseActor = system.ActorOf(props, "some-group");
 
 
                 //클러스터에 구성된 액터 생성
@@ -52,7 +54,19 @@ namespace ServiceA
 
                     //actor.Tell(cki.Key.ToString() );
 
-                    Console.WriteLine(actor.Ask(cki.Key.ToString()).Result);
+                    //로컬액터...
+                    var localActor = system.ActorSelection("user/simple");
+                    Console.WriteLine( localActor.Ask(5).Result );
+
+                    var localChildActor = system.ActorSelection("user/simple/mychild");
+                    localChildActor.Tell("HI");
+
+                    //로컬 비동기 함수 ( OOP )
+                    int testResult = simpleClass.Receive(5).Result;
+
+
+                    //브로드 캐스트...
+                    //Console.WriteLine( broadCaseActor.Ask(cki.Key.ToString()).Result );
 
                     // Exit if the user pressed the 'X' key.
                     if (cki.Key == ConsoleKey.X) break;
